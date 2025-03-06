@@ -6,10 +6,12 @@ import {
   Patch,
   Param,
   Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { CreateCategorieDto } from './dto/create-categorie.dto';
 
 @Controller('products')
 export class ProductsController {
@@ -17,7 +19,18 @@ export class ProductsController {
 
   @Post()
   create(@Body() createProductDto: CreateProductDto) {
+    console.log(createProductDto);
     return this.productsService.create(createProductDto);
+  }
+
+  @Post('/categorie')
+  createCategorie(@Body() createCategorieDto: CreateCategorieDto) {
+    return this.productsService.createProductCategorie(createCategorieDto);
+  }
+
+  @Get('/categorie')
+  getAllCategories() {
+    return this.productsService.getAllCategories();
   }
 
   @Get()
@@ -26,8 +39,8 @@ export class ProductsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productsService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.productsService.findOne(id);
   }
 
   @Patch(':id')
