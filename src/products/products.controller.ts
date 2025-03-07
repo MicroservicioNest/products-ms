@@ -1,44 +1,36 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  ParseIntPipe,
-} from '@nestjs/common';
+import { Controller, Body, Patch, Param, ParseIntPipe } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { CreateCategorieDto } from './dto/create-categorie.dto';
+import { MessagePattern } from '@nestjs/microservices';
 
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-  @Post()
+  @MessagePattern('create.product')
   create(@Body() createProductDto: CreateProductDto) {
     console.log(createProductDto);
     return this.productsService.create(createProductDto);
   }
 
-  @Post('/categorie')
+  @MessagePattern('create.categorie')
   createCategorie(@Body() createCategorieDto: CreateCategorieDto) {
     return this.productsService.createProductCategorie(createCategorieDto);
   }
 
-  @Get('/categorie')
+  @MessagePattern('get.categories')
   getAllCategories() {
     return this.productsService.getAllCategories();
   }
 
-  @Get()
+  @MessagePattern('get.products')
   findAll() {
     return this.productsService.findAll();
   }
 
-  @Get(':id')
+  @MessagePattern('get.product')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.productsService.findOne(id);
   }
@@ -48,7 +40,7 @@ export class ProductsController {
     return this.productsService.update(+id, updateProductDto);
   }
 
-  @Delete(':id')
+  @MessagePattern('remove.product')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.productsService.remove(id);
   }
