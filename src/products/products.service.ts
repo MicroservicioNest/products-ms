@@ -74,7 +74,19 @@ export class ProductsService {
     return `This action updates a #${id} product`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  async remove(id: number) {
+    const productExists = await this.prisma.product.findFirst({
+      where: {
+        id,
+      },
+    });
+
+    if (!productExists) throw new NotFoundException('Producto inexistente');
+
+    return this.prisma.product.delete({
+      where: {
+        id,
+      },
+    });
   }
 }
