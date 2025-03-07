@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -7,6 +8,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from './prisma.service';
 import { CreateCategorieDto } from './dto/create-categorie.dto';
+import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class ProductsService {
@@ -28,7 +30,11 @@ export class ProductsService {
       },
     });
 
-    if (categorie) throw new BadRequestException('Categorie ya existe');
+    if (categorie)
+      throw new RpcException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'Categoria ya existe',
+      });
 
     return this.prisma.categorie.create({
       data: categorieDto,
@@ -65,7 +71,11 @@ export class ProductsService {
       },
     });
 
-    if (!product) throw new NotFoundException('Producto inexistente');
+    if (!product)
+      throw new RpcException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Producto no encontrado',
+      });
 
     return product;
   }
@@ -81,7 +91,11 @@ export class ProductsService {
       },
     });
 
-    if (!productExists) throw new NotFoundException('Producto inexistente');
+    if (!productExists)
+      throw new RpcException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Producto inexistente',
+      });
 
     return this.prisma.product.delete({
       where: {
