@@ -20,6 +20,11 @@ export class ProductsController {
     return this.productsService.createProductCategorie(createCategorieDto);
   }
 
+  @MessagePattern('validate.products')
+  validateProducts(@Payload('ids') ids: number[]) {
+    return this.productsService.validateProducts(ids);
+  }
+
   @MessagePattern('get.categories')
   getAllCategories() {
     return this.productsService.getAllCategories();

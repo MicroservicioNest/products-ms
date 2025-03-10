@@ -15,6 +15,30 @@ export class ProductsService {
     });
   }
 
+  async validateProducts(ids: number[]) {
+    const products = await this.prisma.product.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        image: true,
+        price: true,
+        stock: true,
+      },
+    });
+
+    if (products.length !== ids.length)
+      throw new RpcException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'Algunos productos no fueros encontrados',
+      });
+    return products;
+  }
+
   async createProductCategorie(categorieDto: CreateCategorieDto) {
     const categorie = await this.prisma.categorie.findFirst({
       where: {
