@@ -25,6 +25,7 @@ model Product {
   id Int @id @default(autoincrement())
   name String
   price Float @default(0)
+  stock Int @default(120)
   description String
   image String?
   brand String @default("Desconocido")
