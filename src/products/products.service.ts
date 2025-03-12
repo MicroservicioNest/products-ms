@@ -4,6 +4,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from './prisma.service';
 import { CreateCategorieDto } from './dto/create-categorie.dto';
 import { RpcException } from '@nestjs/microservices';
+import { ProductsStockDto } from './dto/product-stock.dto';
 
 @Injectable()
 export class ProductsService {
@@ -121,5 +122,31 @@ export class ProductsService {
         id,
       },
     });
+  }
+
+  async updateStockProducts(productsStock: ProductsStockDto) {
+    try {
+      console.log('llego a update stock');
+      await Promise.all(
+        productsStock.products.map((product) => {
+          return this.prisma.product.update({
+            where: {
+              id: product.id,
+            },
+            data: {
+              stock: {
+                decrement: product.quantity,
+              },
+            },
+          });
+        }),
+      );
+      return true;
+    } catch (error) {
+      throw new RpcException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'Error al actualizar stock',
+      });
+    }
   }
 }
