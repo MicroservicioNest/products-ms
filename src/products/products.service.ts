@@ -10,7 +10,19 @@ import { ProductsStockDto } from './dto/product-stock.dto';
 export class ProductsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(createProductDto: CreateProductDto) {
+  async create(createProductDto: CreateProductDto) {
+    const categorieExists = await this.prisma.categorie.findFirst({
+      where: {
+        id: createProductDto.categoryId,
+      },
+    });
+
+    if (!categorieExists)
+      throw new RpcException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'Categoria no encontrada',
+      });
+
     return this.prisma.product.create({
       data: createProductDto,
     });
