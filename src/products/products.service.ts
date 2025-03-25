@@ -1,6 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from './prisma.service';
 import { CreateCategorieDto } from './dto/create-categorie.dto';
 import { RpcException } from '@nestjs/microservices';
@@ -112,10 +111,6 @@ export class ProductsService {
     return product;
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
-  }
-
   async remove(id: number) {
     const productExists = await this.prisma.product.findFirst({
       where: {
@@ -138,7 +133,6 @@ export class ProductsService {
 
   async updateStockProducts(productsStock: ProductsStockDto) {
     try {
-      console.log('llego a update stock');
       await Promise.all(
         productsStock.products.map((product) => {
           return this.prisma.product.update({
